@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K4 & Asana Live Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="mesh-bg"></div>
+  <div class="mesh-bg-blob blob-1"></div>
+  <div class="mesh-bg-blob blob-2"></div>
+  <div class="mesh-bg-blob blob-3"></div>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar glass-panel">
+      <div class="sidebar-header">
+        <div class="logo-area">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+          <h2>Dashboard</h2>
+        </div>
+        <div class="live-indicator">
+          <span class="dot"></span> <span>Live Sync Active</span>
+        </div>
+      </div>
+      <div class="search-wrapper">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="search" placeholder="Search projects..." />
+      </div>
+      <div class="project-list" id="project-list">
+        <!-- Project items injected via JS -->
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content glass-panel">
+      <div id="welcome-state" class="welcome-state">
+        <div class="welcome-icon-wrapper">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        </div>
+        <h1>Select a project to begin</h1>
+        <p>Real-time data synced with K4 and Asana every 15 minutes.</p>
+      </div>
+
+      <div id="dashboard-state" class="dashboard-state hidden">
+        <div class="dash-header">
+          <div class="dash-header-title">
+            <h1 id="proj-title">Project Name</h1>
+            <span class="k4-badge" id="proj-k4-stage">Loading...</span>
+          </div>
+          <div class="overall-progress-wrapper">
+            <svg class="progress-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="overall-progress">
+              <span id="proj-pct">0%</span> Complete
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-toolbar">
+          <div class="filter-group" id="filter-group">
+            <button class="filter-btn active" data-filter="all">All Tasks</button>
+            <button class="filter-btn" data-filter="in-progress">In Progress</button>
+            <button class="filter-btn" data-filter="not-started">Not Started</button>
+            <button class="filter-btn" data-filter="complete">Completed</button>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <div class="chart-container glass-card">
+            <h3>Completion Overview</h3>
+            <div class="chart-wrapper">
+              <canvas id="mainChart"></canvas>
+            </div>
+          </div>
+          <div class="stats-container">
+            <div class="stat-box glass-card complete">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+              <div class="stat-data">
+                <p>Complete</p>
+                <h4 id="stat-complete">0</h4>
+              </div>
+            </div>
+            <div class="stat-box glass-card in-progress">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="stat-data">
+                <p>In Progress</p>
+                <h4 id="stat-inprogress">0</h4>
+              </div>
+            </div>
+            <div class="stat-box glass-card not-started">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+              <div class="stat-data">
+                <p>Not Started</p>
+                <h4 id="stat-notstarted">0</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sections-container" id="sections-container">
+          <!-- Sections injected via JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
