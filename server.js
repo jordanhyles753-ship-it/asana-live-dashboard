@@ -382,7 +382,9 @@ app.get('/api/data', (req, res) => {
               parsedCompletedAt = manualOverrides[t.id].completed_at;
             } else {
               const completedField = t.custom_fields && t.custom_fields.find(f => f.name === 'Completed');
-              if (completedField && completedField.display_value) {
+              if (completedField && completedField.date_value && completedField.date_value.date) {
+                parsedCompletedAt = completedField.date_value.date + 'T12:00:00Z';
+              } else if (completedField && completedField.display_value) {
                 parsedCompletedAt = completedField.display_value;
               } else if (t.completed_at) {
                 parsedCompletedAt = t.completed_at;

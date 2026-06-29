@@ -58,7 +58,7 @@ async function asanaGetAll(baseEndpoint) {
   return allData;
 }
 
-const OPT_FIELDS = 'name,memberships.section.name,subtasks.name,subtasks.assignee.name,subtasks.completed,subtasks.created_at,subtasks.due_on,subtasks.completed_at,assignee.name,created_at,due_on,completed_at,completed,custom_fields';
+const OPT_FIELDS = 'name,memberships.section.name,subtasks.name,subtasks.assignee.name,subtasks.completed,subtasks.created_at,subtasks.due_on,subtasks.completed_at,subtasks.custom_fields,assignee.name,created_at,due_on,completed_at,completed,custom_fields';
 
 async function exportAsana() {
   console.log('Fetching all projects...');
