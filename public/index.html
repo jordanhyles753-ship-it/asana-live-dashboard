@@ -27,6 +27,9 @@
           <span class="dot"></span> <span>Live Sync Active</span>
         </div>
       </div>
+      
+      <!-- Original single view, no nav tabs needed -->
+
       <div class="search-wrapper">
         <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="search" placeholder="Search projects..." />
@@ -45,6 +48,8 @@
         <h1>Select a project to begin</h1>
         <p>Real-time data synced with K4 and Asana every 15 minutes.</p>
       </div>
+
+
 
       <div id="dashboard-state" class="dashboard-state hidden">
         <div class="dash-header">
@@ -107,7 +112,31 @@
       </div>
     </main>
   </div>
+  
+  <!-- Manual Completion Modal -->
+  <div id="completion-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="modal-header">
+        <h2>Mark as Complete</h2>
+        <button id="modal-close" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="completion-date">Completion Date</label>
+          <input type="date" id="completion-date" class="modal-input" required>
+        </div>
+        <div class="form-group">
+          <label for="completion-duration">Duration (e.g., 2h 30m)</label>
+          <input type="text" id="completion-duration" class="modal-input" placeholder="1h 15m" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-submit" class="modal-submit-btn">Save Completion</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
+  <script src="append_app.js"></script>
 </body>
 </html>

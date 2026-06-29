@@ -309,7 +309,12 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
 }
+
+.dashboard-state::-webkit-scrollbar { width: 6px; }
+.dashboard-state::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.dashboard-state::-webkit-scrollbar-track { background: transparent; }
 
 .dash-header {
   padding: 2.5rem 3rem 1.5rem;
@@ -522,18 +527,12 @@ body {
 
 /* Sections */
 .sections-container {
-  flex: 1;
-  overflow-y: auto;
   padding: 0 3rem 3rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 2rem;
   align-content: flex-start;
 }
-
-.sections-container::-webkit-scrollbar { width: 6px; }
-.sections-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-.sections-container::-webkit-scrollbar-track { background: transparent; }
 
 .section-card {
   display: flex;
@@ -644,6 +643,48 @@ body {
   padding-left: 26px; /* align with text */
 }
 
+.t-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 26px;
+  margin-top: 8px;
+}
+
+.t-assignee-badge, .t-days-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.t-assignee-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+.t-days-badge.badge-info {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+}
+
+.t-days-badge.badge-warning {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  color: #fef08a;
+}
+
+.t-days-badge.badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
 .t-date, .t-assignee {
   font-size: 0.75rem;
   padding: 4px 10px;
@@ -688,4 +729,317 @@ body {
 ::view-transition-new(root) {
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* Navigation Tabs */
+.sidebar-nav {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+.nav-tab {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--glass-border);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.nav-tab:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-primary);
+}
+.nav-tab.active {
+  background: var(--accent-primary-light);
+  color: var(--accent-primary);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* Timeline State */
+.timeline-state {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.timeline-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 40px;
+  position: relative;
+}
+/* Center Line */
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 40px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--accent-primary) 10%, var(--blob-2) 90%, transparent);
+  box-shadow: 0 0 10px var(--accent-primary);
+  opacity: 0.5;
+}
+
+/* Timeline Month Block */
+.timeline-month {
+  margin-bottom: 40px;
+  position: relative;
+}
+.timeline-month-header {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin-bottom: 20px;
+  padding-left: 40px;
+  text-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+}
+
+/* Timeline Node */
+.timeline-item {
+  position: relative;
+  padding-left: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  animation: slideUp 0.5s ease-out backwards;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -5px;
+  top: 10px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-primary);
+  z-index: 2;
+}
+
+.timeline-date {
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 80px;
+  padding-top: 6px;
+}
+
+.timeline-card {
+  flex: 1;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border-left: 4px solid var(--accent-primary);
+}
+
+.timeline-task {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.timeline-task strong {
+  color: #fff;
+}
+
+
+/* Due Date Badges */
+.t-due-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.t-due-badge.badge-primary {
+  color: #fff;
+  background: rgba(14, 165, 233, 0.15); /* Cyan */
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+.t-due-badge.badge-success {
+  color: #fff;
+  background: rgba(16, 185, 129, 0.15); /* Emerald Green */
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.t-due-badge.badge-danger {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.15); /* Red */
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Collapsible Sections */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
+  transition: opacity 0.2s ease;
+}
+
+.section-header:hover {
+  opacity: 0.8;
+}
+
+.section-header h3 {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.section-header .chevron {
+  transition: transform 0.3s ease;
+  color: var(--text-muted);
+}
+
+.section-card.collapsed .chevron {
+  transform: rotate(-90deg);
+}
+
+.section-card.collapsed .tasks-list {
+  display: none;
+}
+
+.section-card.collapsed .section-header {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.modal-close-btn:hover { color: #fff; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.modal-input {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.modal-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-primary-light);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+.modal-submit-btn {
+  background: var(--status-complete);
+  color: #020617;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.modal-submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Collapsible Subtasks */
+.task-expand-icon {
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: transform 0.3s ease, color 0.3s ease;
+  margin-left: 8px;
+}
+.task-expand-icon:hover {
+  color: var(--text-primary);
+}
+.task-item.expanded > .t-header > .task-expand-icon {
+  transform: rotate(180deg);
+}
+.subtasks-container {
+  display: none;
+  margin-left: 8px;
+  border-left: 2px solid var(--border);
+  padding-left: 12px;
+  margin-top: 8px;
+}
+.task-item.expanded > .subtasks-container {
+  display: block;
+  animation: fadeDown 0.3s ease forwards;
+}
+
+/* Clickable Status */
+.t-status {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.t-status:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(255,255,255,0.4);
 }

@@ -160,32 +160,61 @@ function renderSections(sections) {
 
     const delayClass = `anim-delay-${Math.min(index, 5)}`;
     const html = `
-      <div class="section-card ${delayClass}">
-        <h3>${s.name}</h3>
+      <div class="section-card collapsed ${delayClass}">
+        <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <h3>${s.name}</h3>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
         <div class="tasks-list">
-          ${s.tasks.map(t => {
-            const isVisible = currentFilter === 'all' || 
-                              (currentFilter === 'complete' && t.status === 'Complete') || 
-                              (currentFilter === 'in-progress' && t.status === 'In Progress') ||
-                              (currentFilter === 'not-started' && t.status === 'Not Started');
-            
-            let infoArr = [];
-            if (t.assignee) infoArr.push(`<span class="t-assignee">${t.assignee}</span>`);
-            if (t.completed_at) {
-              infoArr.push(`<span class="t-date">${new Date(t.completed_at).toLocaleDateString()}</span>`);
-            } else if (t.due_on) {
-              infoArr.push(`<span class="t-date">${new Date(t.due_on).toLocaleDateString()}</span>`);
-            }
-            return `
-            <div class="task-item ${isVisible ? '' : 'hidden'} st-${t.status.replace(' ', '')}">
-              <div class="t-header">
-                <div class="t-status ${t.status.replace(' ', '')}"></div>
-                <div class="t-name">${t.name}</div>
+          ${(function() {
+            function renderTask(t, depth = 0) {
+              const isVisible = currentFilter === 'all' || 
+                                (currentFilter === 'complete' && t.status === 'Complete') || 
+                                (currentFilter === 'in-progress' && t.status === 'In Progress') ||
+                                (currentFilter === 'not-started' && t.status === 'Not Started');
+              
+              let extraBadges = [];
+              if (t.completed_at) {
+                extraBadges.push(`<span class="t-due-badge badge-success">✅ Completed ${new Date(t.completed_at).toLocaleDateString()}</span>`);
+              } else if (t.due_on) {
+                const due = new Date(t.due_on);
+                const isOverdue = due < new Date() && t.status !== 'Complete';
+                const badgeClass = isOverdue ? 'badge-danger' : 'badge-primary';
+                extraBadges.push(`<span class="t-due-badge ${badgeClass}">📅 Due ${due.toLocaleDateString()}</span>`);
+              }
+
+              if (t.assignee) {
+                extraBadges.push(`<span class="t-assignee-badge">👤 ${t.assignee}</span>`);
+              }
+              if (t.timeOpenStr) {
+                const hMatch = t.timeOpenStr.match(/(\d+)h/);
+                const hours = hMatch ? parseInt(hMatch[1], 10) : 0;
+                let badgeColor = hours >= 48 ? 'badge-danger' : (hours >= 24 ? 'badge-warning' : 'badge-info');
+                extraBadges.push(`<span class="t-days-badge ${badgeColor}">⏱️ Open for ${t.timeOpenStr}</span>`);
+              }
+              if (t.kanbanTimeStr) {
+                const prefix = t.status === 'Complete' ? 'Took' : 'Logged';
+                extraBadges.push(`<span class="t-days-badge badge-info">⏳ ${prefix} ${t.kanbanTimeStr}</span>`);
+              }
+              
+              const hasSubtasks = t.subtasks && t.subtasks.length > 0;
+              const subtasksHtml = hasSubtasks ? `<div class="subtasks-container">${t.subtasks.map(sub => renderTask(sub, depth + 1)).join('')}</div>` : '';
+              const expandIcon = hasSubtasks ? `<svg class="task-expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>` : '';
+              
+              return `
+              <div class="task-item ${isVisible ? '' : 'hidden'} st-${t.status.replace(' ', '')}">
+                <div class="t-header">
+                  <div class="t-status ${t.status.replace(' ', '')}" data-id="${t.id}" data-name="${t.name}"></div>
+                  <div class="t-name">${t.name}</div>
+                  ${expandIcon}
+                </div>
+                ${extraBadges.length > 0 ? `<div class="t-badges">${extraBadges.join(' ')}</div>` : ''}
+                ${subtasksHtml}
               </div>
-              ${infoArr.length > 0 ? `<div class="t-info">${infoArr.join(' ')}</div>` : ''}
-            </div>
-            `;
-          }).join('')}
+              `;
+            }
+            return s.tasks.map(t => renderTask(t)).join('');
+          })()}
         </div>
       </div>
     `;
@@ -214,3 +243,73 @@ document.getElementById('search').addEventListener('input', renderSidebar);
 // Initial fetch and auto-refresh
 fetchData();
 setInterval(fetchData, 15 * 60 * 1000);
+
+let currentUpdateTaskId = null;
+const modal = document.getElementById('completion-modal');
+const modalClose = document.getElementById('modal-close');
+const modalSubmit = document.getElementById('modal-submit');
+const inputDate = document.getElementById('completion-date');
+const inputDuration = document.getElementById('completion-duration');
+
+document.addEventListener('click', (e) => {
+  const expandTarget = e.target.closest('.task-expand-icon');
+  if (expandTarget) {
+    const taskItem = expandTarget.closest('.task-item');
+    if (taskItem) taskItem.classList.toggle('expanded');
+    return;
+  }
+  
+  if (e.target.classList.contains('t-status')) {
+    currentUpdateTaskId = e.target.getAttribute('data-id');
+    if (!currentUpdateTaskId || currentUpdateTaskId === "undefined") {
+      alert("This task cannot be manually overridden yet (missing ID).");
+      return;
+    }
+    
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+    inputDate.value = localISOTime;
+    inputDuration.value = '';
+    
+    modal.classList.remove('hidden');
+  }
+});
+
+if(modalClose) modalClose.addEventListener('click', () => modal.classList.add('hidden'));
+
+if(modalSubmit) modalSubmit.addEventListener('click', async () => {
+  if (!currentUpdateTaskId) return;
+  const dateStr = inputDate.value;
+  const durStr = inputDuration.value;
+  
+  if (!dateStr) return alert("Date is required");
+  
+  modalSubmit.textContent = 'Saving...';
+  modalSubmit.disabled = true;
+  
+  try {
+    const res = await fetch('/api/update_task', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: currentUpdateTaskId,
+        completed_at: new Date(dateStr).toISOString(),
+        duration: durStr
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      modal.classList.add('hidden');
+      await fetchData();
+    } else {
+      alert("Error saving: " + (result.error || "Unknown"));
+    }
+  } catch (e) {
+    alert("Network error.");
+  } finally {
+    modalSubmit.textContent = 'Save Completion';
+    modalSubmit.disabled = false;
+  }
+});
+
+
