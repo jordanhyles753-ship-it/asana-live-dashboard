@@ -1,5 +1,3 @@
 node_modules/
 .DS_Store
 *.log
-asana_dump.json
-k4_dump.json
