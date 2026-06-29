@@ -293,7 +293,7 @@ if(modalSubmit) modalSubmit.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: currentUpdateTaskId,
-        completed_at: new Date(dateStr).toISOString(),
+        completed_at: new Date(dateStr + 'T12:00:00').toISOString(),
         duration: durStr
       })
     });

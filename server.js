@@ -377,9 +377,21 @@ app.get('/api/data', (req, res) => {
               }
             }
 
+            let parsedCompletedAt = null;
+            if (manualOverrides[t.id] && manualOverrides[t.id].completed_at) {
+              parsedCompletedAt = manualOverrides[t.id].completed_at;
+            } else {
+              const completedField = t.custom_fields && t.custom_fields.find(f => f.name === 'Completed');
+              if (completedField && completedField.display_value) {
+                parsedCompletedAt = completedField.display_value;
+              } else if (t.completed_at) {
+                parsedCompletedAt = t.completed_at;
+              }
+            }
+
             let status = 'Not Started';
 
-            if (manualOverrides[t.id]) {
+            if (parsedCompletedAt || t.completed) {
                status = 'Complete';
                complete++;
             } else if (currentForcedStatus) {
@@ -391,10 +403,7 @@ app.get('/api/data', (req, res) => {
                status = 'In Progress';
                inProgress++;
             } else {
-               if (t.completed) {
-                 complete++;
-                 status = 'Complete';
-               } else if (assignee) {
+               if (assignee) {
                  inProgress++;
                  status = 'In Progress';
                } else {
@@ -454,7 +463,7 @@ app.get('/api/data', (req, res) => {
               status, 
               type: 'task',
               due_on: finalDue,
-              completed_at: (manualOverrides[t.id] ? manualOverrides[t.id].completed_at : (t.completed_at || null)),
+              completed_at: parsedCompletedAt,
               assignee: assignee,
               kanbanTimeStr: kanbanTimeStr,
               subtasks: (t.subtasks && Array.isArray(t.subtasks)) ? t.subtasks.map(sub => processTask(sub, currentForcedStatus)) : []
