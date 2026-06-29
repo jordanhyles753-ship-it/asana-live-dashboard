@@ -174,6 +174,7 @@ async function fetchKanbanData(projects) {
 // In-memory data cache to prevent 80-second SMB read delays on every API request
 let cachedK4Data = {};
 let cachedAsanaData = [];
+let k4HistoryData = {};
 let manualOverrides = {};
 
 // Function to load data into memory
@@ -221,6 +222,14 @@ async function loadDataIntoMemory(attempt = 1) {
       manualOverrides = JSON.parse(overridesRaw);
     } catch(e) {
       manualOverrides = {};
+    }
+
+    // Load k4_history
+    try {
+      const k4HistoryRaw = await fs.promises.readFile(path.join(__dirname, 'k4_history.json'), 'utf8');
+      k4HistoryData = JSON.parse(k4HistoryRaw);
+    } catch(e) {
+      k4HistoryData = {};
     }
 
     console.log('JSON data loaded into memory successfully!');
@@ -380,6 +389,22 @@ app.get('/api/data', (req, res) => {
             let parsedCompletedAt = null;
             if (manualOverrides[t.id] && manualOverrides[t.id].completed_at) {
               parsedCompletedAt = manualOverrides[t.id].completed_at;
+            } else if (matchedArticle && taskIndex !== -1 && k4CurrentIndex !== -1 && taskIndex < k4CurrentIndex) {
+              // K4 task that is complete
+              const articleHistory = k4HistoryData[matchedArticle.id];
+              let historyDate = null;
+              if (articleHistory && articleHistory.history) {
+                 const stepName = WORKFLOW_ORDER[taskIndex];
+                 historyDate = articleHistory.history[stepName];
+                 if (!historyDate) {
+                    const normT = normalizeStep(stepName);
+                    const key = Object.keys(articleHistory.history).find(k => normalizeStep(k) === normT);
+                    if (key) historyDate = articleHistory.history[key];
+                 }
+              }
+              // If we don't have exact history (e.g. from before the ledger started),
+              // fall back to the article's lastModified date.
+              parsedCompletedAt = historyDate || matchedArticle.lastModified || null;
             } else {
               const completedField = t.custom_fields && t.custom_fields.find(f => f.name === 'Completed');
               if (completedField && completedField.date_value && completedField.date_value.date) {
@@ -507,6 +532,7 @@ app.get('/api/data', (req, res) => {
         let maxIndex = 0;
         let assignedUserFromName = null;
         let maxArticleModified = null;
+        let maxArticleId = null;
         
         articles.forEach(a => {
           if (a.workflowStep) {
@@ -515,9 +541,11 @@ app.get('/api/data', (req, res) => {
             if (idx > maxIndex) {
               maxIndex = idx;
               maxArticleModified = a.lastModified;
+              maxArticleId = a.id;
             } else if (idx === maxIndex) {
               if (!maxArticleModified || new Date(a.lastModified) > new Date(maxArticleModified)) {
                  maxArticleModified = a.lastModified;
+                 maxArticleId = a.id;
               }
             }
           }
@@ -553,10 +581,25 @@ app.get('/api/data', (req, res) => {
           let status = 'Not Started';
           let assignee = null;
           let taskTimeOpen = null;
+          let parsedCompletedAt = null;
           
           if (index < maxIndex) {
             status = 'Complete';
             complete++;
+            
+            if (maxArticleId) {
+               const articleHistory = k4HistoryData[maxArticleId];
+               let historyDate = null;
+               if (articleHistory && articleHistory.history) {
+                 historyDate = articleHistory.history[stepName];
+                 if (!historyDate) {
+                    const normT = normalizeStep(stepName);
+                    const key = Object.keys(articleHistory.history).find(k => normalizeStep(k) === normT);
+                    if (key) historyDate = articleHistory.history[key];
+                 }
+               }
+               parsedCompletedAt = historyDate || maxArticleModified || null;
+            }
           } else if (index === maxIndex) {
             status = 'In Progress';
             inProgress++;
@@ -599,7 +642,7 @@ app.get('/api/data', (req, res) => {
             status,
             type: 'task',
             due_on: null,
-            completed_at: null,
+            completed_at: parsedCompletedAt,
             assignee,
             timeOpenStr: taskTimeOpen,
             kanbanTimeStr: taskKanbanTime

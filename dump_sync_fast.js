@@ -670,8 +670,8 @@ async function authenticateK4(schoolRegex) {
 }
 
 async function main() {
-  if (EXPLORE_WF) return exploreWorkflowBasic();
-  if (DUMP_WSDL)  return dumpWSDL();
+  if (EXPLORE_WF) return exploreWorkflow('15886', '2'); // Using dummy IDs just to execute it if needed, or extract logic.
+  if (DUMP_WSDL) return await dumpWsdl();
 
   log(`[sync] ${DRY_RUN ? '🔍 DRY RUN — no changes will be written to Asana' : '🚀 APPLY MODE — writing to Asana'}`);
   log('');
@@ -719,6 +719,28 @@ async function main() {
   fs.writeFileSync(path.join(__dirname, 'k4_dump.json'), JSON.stringify(k4Map, null, 2));
   fs.writeFileSync(path.join(__dirname, 'k4Map.json'), JSON.stringify(k4Map, null, 2));
   console.log("DUMPED k4Map to k4_dump.json and k4Map.json!");
+  
+  // --- K4 HISTORY LEDGER ---
+  const historyPath = path.join(__dirname, 'k4_history.json');
+  let k4History = {};
+  if (fs.existsSync(historyPath)) {
+    try { k4History = JSON.parse(fs.readFileSync(historyPath, 'utf8')); } catch (e) { }
+  }
+  
+  for (const a of allArticles) {
+    if (!k4History[a.id]) {
+      k4History[a.id] = { currentStep: a.workflowStep, history: {} };
+    } else if (k4History[a.id].currentStep !== a.workflowStep) {
+      // The article moved to a new step! The old step is now completed.
+      const oldStep = k4History[a.id].currentStep;
+      k4History[a.id].history[oldStep] = a.lastModified;
+      k4History[a.id].currentStep = a.workflowStep;
+    }
+  }
+  
+  fs.writeFileSync(historyPath, JSON.stringify(k4History, null, 2));
+  console.log("UPDATED k4_history.json ledger!");
+  
   process.exit(0);
 }
 main().catch(console.error);
