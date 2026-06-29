@@ -36193,7 +36193,7 @@
       "code": "432237",
       "workflowStep": "Draft",
       "publicationID": "1626976338631",
-      "lastModified": "2026-06-29T15:00:58.832+00:00",
+      "lastModified": "2026-06-29T15:37:16.109+00:00",
       "assignedUserID": "27703265"
     },
     {
@@ -39631,12 +39631,12 @@
       "assignedUserID": "841"
     },
     {
-      "id": "41304665",
-      "name": "432334 JOTB zBM Layout SE",
+      "id": "39438048",
+      "name": "432334 JOTB J Layout SE",
       "code": "432334",
-      "workflowStep": "Layout Creation",
+      "workflowStep": "Draft",
       "publicationID": "1626976338631",
-      "lastModified": "2026-06-27T17:42:41.494+00:00",
+      "lastModified": "2026-06-27T17:03:15.692+00:00",
       "assignedUserID": "841"
     },
     {
@@ -39811,12 +39811,12 @@
       "assignedUserID": "841"
     },
     {
-      "id": "39438048",
-      "name": "432334 JOTB J Layout SE",
+      "id": "41304665",
+      "name": "432334 JOTB zBM Layout SE",
       "code": "432334",
-      "workflowStep": "Draft",
+      "workflowStep": "Layout Creation",
       "publicationID": "1626976338631",
-      "lastModified": "2026-06-27T17:03:15.692+00:00",
+      "lastModified": "2026-06-29T15:37:18.454+00:00",
       "assignedUserID": "841"
     },
     {
@@ -43554,24 +43554,6 @@
       "assignedUserID": "783161"
     },
     {
-      "id": "36454774",
-      "name": "432598 SVP 6 L11-15 Article TE",
-      "code": "432598",
-      "workflowStep": "Draft Review",
-      "publicationID": "1626976338631",
-      "lastModified": "2026-06-05T19:47:54.141+00:00",
-      "assignedUserID": "783161"
-    },
-    {
-      "id": "36453065",
-      "name": "432598 SVP 6 L06-10 Article TE",
-      "code": "432598",
-      "workflowStep": "Layout Review",
-      "publicationID": "1626976338631",
-      "lastModified": "2026-06-25T16:03:32.462+00:00",
-      "assignedUserID": "783161"
-    },
-    {
       "id": "42000535",
       "name": "432598 SVP 6 Glossary Article TE",
       "code": "432598",
@@ -43588,6 +43570,24 @@
       "publicationID": "1626976338631",
       "lastModified": "2026-06-29T15:30:17.697+00:00",
       "assignedUserID": "400086"
+    },
+    {
+      "id": "36454774",
+      "name": "432598 SVP 6 L11-15 Article TE",
+      "code": "432598",
+      "workflowStep": "Draft Review",
+      "publicationID": "1626976338631",
+      "lastModified": "2026-06-05T19:47:54.141+00:00",
+      "assignedUserID": "783161"
+    },
+    {
+      "id": "36453065",
+      "name": "432598 SVP 6 L06-10 Article TE",
+      "code": "432598",
+      "workflowStep": "Layout Review",
+      "publicationID": "1626976338631",
+      "lastModified": "2026-06-25T16:03:32.462+00:00",
+      "assignedUserID": "783161"
     },
     {
       "id": "42000379",
