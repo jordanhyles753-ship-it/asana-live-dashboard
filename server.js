@@ -472,6 +472,13 @@ app.get('/api/data', (req, res) => {
     });
     
     // Inject synthetic 432237 Read 6 Curr
+    const READ6_WORKFLOW_ORDER = [
+      'Draft', 'Manager Draft Review', 'Draft Review', 'Layout Creation',
+      'Layout Review', 'Proofing R1', 'Editorial Round', 'Editorial Round Final',
+      'Pre-Apogee Proof R1', 'Pre-Apogee Proof R2', 'Apogee Proof',
+      'Ready for Print Order', 'Approved', 'Ready to Route', 'Route', 'Print',
+      'Printing Complete', 'Copy Edit', 'Final'
+    ];
     const read6Articles = (k4Data['432237'] || []).filter(a => a.name && a.name.includes('Read'));
     if (read6Articles.length > 0) {
       const sectionsMap = {};
@@ -492,7 +499,7 @@ app.get('/api/data', (req, res) => {
         
         articles.forEach(a => {
           if (a.workflowStep) {
-            let idx = WORKFLOW_ORDER.indexOf(a.workflowStep);
+            let idx = READ6_WORKFLOW_ORDER.indexOf(a.workflowStep);
             if (idx === -1) idx = 0; // fallback if unknown
             if (idx > maxIndex) {
               maxIndex = idx;
@@ -531,7 +538,7 @@ app.get('/api/data', (req, res) => {
         }
         
         let complete = 0, inProgress = 0, notStarted = 0;
-        const tasks = WORKFLOW_ORDER.map((stepName, index) => {
+        const tasks = READ6_WORKFLOW_ORDER.map((stepName, index) => {
           let status = 'Not Started';
           let assignee = null;
           let taskTimeOpen = null;
@@ -619,7 +626,7 @@ app.listen(PORT, '0.0.0.0', () => {
 // Run sync immediately on startup (in background) and then every 15 mins
 setInterval(() => runSync(), 15 * 60 * 1000);
 
-function runSync() {
+async function runSync() {
   console.log('Running 15-min K4 & Asana Sync...');
   try {
     console.log('Syncing K4 Data...');
@@ -633,9 +640,11 @@ function runSync() {
         asanaCmd = `node "${path.join(localScratch, 'export_asana.js')}" > /dev/null 2>&1`;
     }
 
-    execSync(k4Cmd);
+    const util = require('util');
+    const exec = util.promisify(require('child_process').exec);
+    await exec(k4Cmd);
     console.log('Syncing Asana Data...');
-    execSync(asanaCmd);
+    await exec(asanaCmd);
     console.log('Sync Complete.');
     
     // Refresh the in-memory cache now that the files have been updated
