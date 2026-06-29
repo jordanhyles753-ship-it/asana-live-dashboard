@@ -1,9 +1,15 @@
+console.log("Loading express...");
 const express = require('express');
+console.log("Loading fs...");
 const fs = require('fs');
+console.log("Loading path...");
 const path = require('path');
+console.log("Loading child_process...");
 const { execSync } = require('child_process');
 
+console.log("Setting up app...");
 const app = express();
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 function extractAssigneeFromName(name) {
@@ -20,42 +26,286 @@ function extractAssigneeFromName(name) {
 }
 
 
-const k4MapData = JSON.parse(fs.readFileSync('/Users/jordan.jones/Desktop/k4Map.json', 'utf8'));
+console.log("Reading k4Map.json...");
+const k4MapData = JSON.parse(fs.readFileSync(path.join(__dirname, 'k4Map.json'), 'utf8'));
 
+// Load full K4 user directory fetched from K4 API
+console.log("Loading K4 user directory...");
+let k4UsersFromAPI = {};
+try {
+  k4UsersFromAPI = JSON.parse(fs.readFileSync(path.join(__dirname, 'k4_users.json'), 'utf8'));
+  console.log(`Loaded ${Object.keys(k4UsersFromAPI).length} users from k4_users.json`);
+} catch(e) {
+  console.log('k4_users.json not found, falling back to manual map');
+}
+
+console.log("Building user map...");
 function buildUserMap(k4Data) {
-  const map = {};
+  // Start with API-fetched names as the authoritative source
+  const map = Object.assign({}, k4UsersFromAPI);
+  
+  // Also extract names from article titles as a fallback for any missing IDs
   for (const k in k4Data) {
     k4Data[k].forEach(a => {
       const match = a.name.match(/Article(?:\s+(?:SE|TE))?\s+(.+)$/i);
-      if (match && match[1]) {
+      if (match && match[1] && a.assignedUserID && !map[a.assignedUserID]) {
         const n = match[1].replace(/\bCurr\b/i, '').replace(/[^a-zA-Z ]/g, '').trim();
-        if (n.length > 2 && n.toUpperCase() !== 'TEST' && !['PILOT','FINAL','UPDATE','TRASH','EXTRA','TEMPLATE','BOARDS','UPDATED','REVOKED'].some(x => n.toUpperCase().includes(x)) && a.assignedUserID) {
+        if (n.length > 2 && n.toUpperCase() !== 'TEST' && !['PILOT','FINAL','UPDATE','TRASH','EXTRA','TEMPLATE','BOARDS','UPDATED','REVOKED'].some(x => n.toUpperCase().includes(x))) {
           map[a.assignedUserID] = n;
         }
       }
     });
   }
-  map['20039318'] = 'Wendy Groff';
-  map['22041270'] = 'Karis Wesley';
-  map['22043124'] = 'Caleb Burdick';
-  map['20039266'] = 'Jessica Garcia';
-  map['19775718'] = 'Kaylee Millard';
-  map['565'] = 'Jennifer Pade';
   return map;
 }
+
 const k4UserMap = buildUserMap(k4MapData);
 
-app.get('/api/data', (req, res) => {
+const WORKFLOW_ORDER = [
+  'Draft',
+  'Manager Draft Review',
+  'Draft Review',
+  'Layout Creation',
+  'Pilot Layout Review',
+  'Pilot Round',
+  'Layout Review',
+  'Proofing R1',
+  'Editorial Round',
+  'Editorial Round Final',
+  'Pre-Apogee Proof R1',
+  'Pre-Apogee Proof R2',
+  'Apogee Proof',
+  'Ready for Print Order',
+  'Approved',
+  'Ready to Route',
+  'Route',
+  'Print',
+  'Printing Complete',
+  'Copy Edit',
+  'Final'
+];
 
+function normalizeStep(name) {
+  if (!name) return '';
+  return name.toLowerCase().replace(/round/g, 'r').trim();
+}
+
+function matchSection(secStr, artName) {
+  if (!secStr || !artName) return false;
+  
+  // Try direct include (ignoring spaces/case)
+  const cSec = secStr.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  const cArt = artName.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  if (cSec.includes(cArt) || cArt.includes(cSec)) return true;
+
+  // Number extraction fallback (e.g. 'Lessons 1-10' vs 'L001-010')
+  const secNums = secStr.match(/\d+/g);
+  const artNums = artName.match(/\d+/g);
+  
+  if (secNums && artNums && secNums.length >= 2 && artNums.length >= 3) {
+    const s1 = parseInt(secNums[secNums.length-2]);
+    const s2 = parseInt(secNums[secNums.length-1]);
+    const a1 = parseInt(artNums[artNums.length-2]);
+    const a2 = parseInt(artNums[artNums.length-1]);
+    if (s1 === a1 && s2 === a2) return true;
+  }
+  
+  // Front matter / Glossary
+  if (secStr.toLowerCase().includes('front matter') && artName.toLowerCase().includes(' fm ')) return true;
+  if (secStr.toLowerCase().includes('glossary') && artName.toLowerCase().includes('glossary')) return true;
+
+  return false;
+}
+
+const KANBAN_TOKEN = 'L2S9F3YDZVH66UGM';
+let cachedKanbanTasks = {};
+
+async function fetchKanbanData(projects) {
   try {
-    const k4Data = JSON.parse(fs.readFileSync('/Users/jordan.jones/Desktop/k4_dump.json', 'utf8'));
-    const asanaData = JSON.parse(fs.readFileSync('/Users/jordan.jones/Desktop/asana_dump.json', 'utf8'));
+    console.log('Fetching Kanban boards...');
+    const r = await fetch('https://kanban.abeka.com/api/v1/boards?per_page=300', {
+      headers: { Authorization: `Bearer ${KANBAN_TOKEN}`, Accept: 'application/json' },
+    });
+    if (!r.ok) return;
+    const boardsData = await r.json();
+    const boards = boardsData.map(b => b.board);
     
+    for (const proj of projects) {
+      const codeMatch = proj.name.match(/^(\d{5,10})/);
+      if (!codeMatch) continue;
+      const code = codeMatch[1];
+      const pname = proj.name.toLowerCase();
+      
+      const isRead = pname.includes('read');
+      const isWriting = pname.includes('writing');
+      const isLang = pname.includes('lang');
+      const isSpell = pname.includes('spell');
+      
+      let matchedBoard = boards.find(b => {
+         const bname = b.name.toLowerCase();
+         if (!bname.includes(code)) return false;
+         if (isRead && !bname.includes('read')) return false;
+         if (isWriting && !bname.includes('writing')) return false;
+         if (isLang && !bname.includes('lang')) return false;
+         if (isSpell && !bname.includes('spell')) return false;
+         return true;
+      });
+      if (!matchedBoard) matchedBoard = boards.find(b => b.name.includes(code));
+      
+      if (matchedBoard) {
+        const tr = await fetch(`https://kanban.abeka.com/api/v1/boards/${matchedBoard.id}/tasks.json`, {
+          headers: { Authorization: `Bearer ${KANBAN_TOKEN}`, Accept: 'application/json' },
+        });
+        if (!tr.ok) continue;
+        const tasks = await tr.json();
+        
+        cachedKanbanTasks[proj.name] = {};
+        for (const t of tasks) {
+          if (t.name) cachedKanbanTasks[proj.name][t.name] = t.timers_total || 0;
+        }
+      }
+    }
+    console.log('Kanban tasks mapped for', Object.keys(cachedKanbanTasks).length, 'projects');
+  } catch(e) {
+    console.error('Error fetching Kanban data:', e.message);
+  }
+}
+
+// In-memory data cache to prevent 80-second SMB read delays on every API request
+let cachedK4Data = {};
+let cachedAsanaData = [];
+let manualOverrides = {};
+
+// Function to load data into memory
+async function loadDataIntoMemory(attempt = 1) {
+  try {
+    console.log(`Loading JSON data into memory (attempt ${attempt})...`);
+
+    // k4_dump.json (may be empty {}; that's ok)
+    try {
+      const k4Raw = await fs.promises.readFile(path.join(__dirname, 'k4_dump.json'), 'utf8');
+      cachedK4Data = JSON.parse(k4Raw);
+    } catch(e) { cachedK4Data = {}; }
+
+    // asana_dump.json — try __dirname first, then Desktop fallback
+    const asanaPaths = [
+      path.join(__dirname, 'asana_dump.json'),
+      path.join(require('os').homedir(), 'Desktop', 'Asana_Live_Dashboard', 'asana_dump.json')
+    ];
+    let loaded = false;
+    for (const p of asanaPaths) {
+      try {
+        const raw = await fs.promises.readFile(p, 'utf8');
+        cachedAsanaData = JSON.parse(raw);
+        console.log(`Asana data loaded from: ${p} (${cachedAsanaData.length} projects)`);
+        loaded = true;
+        break;
+      } catch(e) { /* try next */ }
+    }
+    if (!loaded) throw new Error('asana_dump.json not found at any known path');
+
+    // Also load k4Map into memory as the primary K4 data source
+    try {
+      const k4MapRaw = await fs.promises.readFile(path.join(__dirname, 'k4Map.json'), 'utf8');
+      cachedK4Data = JSON.parse(k4MapRaw);
+      console.log('K4 map loaded: ' + Object.keys(cachedK4Data).length + ' entries');
+    } catch(e) { console.log('k4Map already loaded at startup'); }
+    
+    // Fetch Kanban timing data
+    const allProjects = [...cachedAsanaData, { name: '432237 Read 6 Curr' }];
+    await fetchKanbanData(allProjects);
+
+    // Load manual overrides
+    try {
+      const overridesRaw = await fs.promises.readFile(path.join(__dirname, 'manual_overrides.json'), 'utf8');
+      manualOverrides = JSON.parse(overridesRaw);
+    } catch(e) {
+      manualOverrides = {};
+    }
+
+    console.log('JSON data loaded into memory successfully!');
+  } catch (err) {
+    console.error(`Error loading data (attempt ${attempt}):`, err.message);
+    if (attempt < 4) {
+      console.log(`Retrying in 3 seconds...`);
+      setTimeout(() => loadDataIntoMemory(attempt + 1), 3000);
+    }
+  }
+}
+
+// Initial load
+loadDataIntoMemory();
+
+app.post('/api/update_task', async (req, res) => {
+  try {
+    const { id, completed_at, duration } = req.body;
+    if (!id) return res.status(400).json({ error: 'Task ID required' });
+    
+    manualOverrides[id] = {
+      status: 'Complete',
+      completed_at: completed_at || new Date().toISOString(),
+      duration: duration || null
+    };
+    
+    // Save to disk
+    await fs.promises.writeFile(path.join(__dirname, 'manual_overrides.json'), JSON.stringify(manualOverrides, null, 2));
+    
+    res.json({ success: true, override: manualOverrides[id] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/data', (req, res) => {
+  try {
+    // Use the instantly available in-memory data
+    const k4Data = cachedK4Data;
+    const asanaData = cachedAsanaData;
+    
+    if (!asanaData || asanaData.length === 0) {
+      return res.json({ projects: [], stats: { totalProjects: 0 } });
+    }
+    
+    let geometryTimeline = [];
+    try {
+      geometryTimeline = JSON.parse(fs.readFileSync(path.join(__dirname, 'geometry_se_timeline.json'), 'utf8'));
+    } catch(e) {}
+    const monthMap = { 'January':'01', 'February':'02', 'March':'03', 'April':'04', 'May':'05', 'June':'06', 'July':'07', 'August':'08', 'September':'09', 'October':'10', 'November':'11', 'December':'12' };
+    
+    function getGeometryDueDate(chapter, taskName) {
+      if (!geometryTimeline.length || !chapter) return null;
+      let searchRegex;
+      if (taskName.match(/Draft|Edit/i)) {
+         searchRegex = new RegExp('Ch ' + chapter + ' SE.*edit', 'i');
+      } else if (taskName.match(/Pilot|Layout|Review|Proof/i)) {
+         searchRegex = new RegExp('Ch ' + chapter + ' SE.*proof', 'i');
+      } else if (taskName.match(/Editorial|Apogee/i)) {
+         searchRegex = new RegExp('Ch ' + chapter + ' SE.*apogee', 'i');
+      }
+      
+      if (searchRegex) {
+         const match = geometryTimeline.find(t => searchRegex.test(t.task));
+         if (match) {
+            return match.year + '-' + monthMap[match.month] + '-' + String(match.day).padStart(2, '0');
+         }
+      }
+      return null;
+    }
+
     // We only send a subset of Asana data to avoid 54MB payload to browser
     const projects = asanaData.map(p => {
       // Find matching K4 project to blend data
-      const k4Project = Object.values(k4Data).find(k => k.code === p.code);
-      const k4Stage = k4Project ? k4Project.maxWorkflowStep : 'Unknown';
+      let k4Stage = 'Unknown';
+      if (k4Data[p.code] && k4Data[p.code].length > 0) {
+        let maxIndex = -1;
+        k4Data[p.code].forEach(a => {
+           if (a.workflowStep) {
+              const idx = WORKFLOW_ORDER.findIndex(w => normalizeStep(w) === normalizeStep(a.workflowStep));
+              if (idx > maxIndex) maxIndex = idx;
+           }
+        });
+        if (maxIndex !== -1) k4Stage = WORKFLOW_ORDER[maxIndex];
+      }
       
       const k4Articles = k4Data[p.code] || [];
 
@@ -71,21 +321,19 @@ app.get('/api/data', (req, res) => {
           
           let k4Assignee = null;
           let k4CurrentStep = null;
+          let k4CurrentIndex = -1;
           
+          const secName = s.section || s.name;
           // Match section to K4 article (e.g. "Abeka CH1 Article" roughly matches)
-          const matchedArticle = k4Articles.find(a => {
-            if (!s.name || !a.name) return false;
-            const cleanS = s.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-            const cleanA = a.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-            return cleanS.includes(cleanA) || cleanA.includes(cleanS);
-          });
+          const matchedArticle = k4Articles.find(a => matchSection(secName, a.name));
           
           if (matchedArticle) {
             k4CurrentStep = matchedArticle.workflowStep;
             k4Assignee = extractAssigneeFromName(matchedArticle.name);
+            k4CurrentIndex = WORKFLOW_ORDER.findIndex(w => normalizeStep(w) === normalizeStep(k4CurrentStep));
           }
           
-          const tasks = s.tasks.map(t => {
+          function processTask(t, forcedStatus = null) {
             let assignee = null;
             if (t.assignee && t.assignee.name) {
               assignee = t.assignee.name;
@@ -94,18 +342,34 @@ app.get('/api/data', (req, res) => {
               if (assignedToField && assignedToField.text_value) assignee = assignedToField.text_value;
             }
 
-            // Prioritize K4 assignee if this task matches K4's current workflow step
-            if (k4CurrentStep && k4Assignee && t.name.toLowerCase() === k4CurrentStep.toLowerCase()) {
-              assignee = k4Assignee;
+            const normTask = normalizeStep(t.name);
+            let taskIndex = -1;
+            const stepMatchIndex = WORKFLOW_ORDER.findIndex(w => normalizeStep(w) === normTask || normTask.includes(normalizeStep(w)));
+            if (stepMatchIndex !== -1) {
+               taskIndex = stepMatchIndex;
+            }
+            
+            let currentForcedStatus = forcedStatus;
+            
+            if (k4CurrentIndex !== -1 && taskIndex !== -1) {
+               if (taskIndex < k4CurrentIndex) {
+                  currentForcedStatus = 'Complete';
+               } else if (taskIndex > k4CurrentIndex) {
+                  currentForcedStatus = 'Not Started';
+               }
             }
 
+            // Prioritize K4 assignee if this task matches K4's current workflow step
+            if (k4CurrentStep && k4Assignee && normTask === normalizeStep(k4CurrentStep)) {
+              assignee = k4Assignee;
+            }
 
             if (assignee && assignee.startsWith('K4 User ')) {
               const id = assignee.replace('K4 User ', '');
               if (k4UserMap[id]) assignee = k4UserMap[id];
               else assignee = 'User ' + id;
             }
-            if (k4CurrentStep && !k4Assignee && t.name.toLowerCase() === k4CurrentStep.toLowerCase()) {
+            if (k4CurrentStep && !k4Assignee && normTask === normalizeStep(k4CurrentStep)) {
               const k4MapArticle = Object.values(k4MapData).flat().find(mapA => mapA.name === matchedArticle.name);
               if (k4MapArticle && k4MapArticle.assignedUserID) {
                 const mappedName = k4UserMap[k4MapArticle.assignedUserID];
@@ -115,29 +379,93 @@ app.get('/api/data', (req, res) => {
 
             let status = 'Not Started';
 
-            if (t.completed) {
-              complete++;
-              status = 'Complete';
-            } else if (assignee) {
-              inProgress++;
-              status = 'In Progress';
+            if (manualOverrides[t.id]) {
+               status = 'Complete';
+               complete++;
+            } else if (currentForcedStatus) {
+               status = currentForcedStatus;
+               if (status === 'Complete') complete++;
+               else if (status === 'In Progress') { inProgress++; }
+               else notStarted++;
+            } else if (k4CurrentIndex !== -1 && taskIndex === k4CurrentIndex) {
+               status = 'In Progress';
+               inProgress++;
             } else {
-              notStarted++;
+               if (t.completed) {
+                 complete++;
+                 status = 'Complete';
+               } else if (assignee) {
+                 inProgress++;
+                 status = 'In Progress';
+               } else {
+                 notStarted++;
+               }
             }
+            
+            let finalDue = t.due_on || null;
+            if (p.name.includes('290319 Geometry SE')) {
+              const chMatch = (s.section || s.name).match(/Chapter (\\d+)/i);
+              if (chMatch) {
+                 const injectedDate = getGeometryDueDate(chMatch[1], t.name);
+                 if (injectedDate) finalDue = injectedDate;
+              }
+            }
+            
+            let kanbanTimeStr = null;
+            if (cachedKanbanTasks[p.name]) {
+              let totalSecs = 0;
+              const n = t.name.toLowerCase();
+              let prefix = null;
+              
+              if (n === 'draft') prefix = 'content:';
+              else if (n === 'edit' || n === 'copy edit' || n === 'art check' || n === 'layout creation') prefix = 'design:';
+              else if (n === 'layout') prefix = 'layout';
+              else if (n === 'proofing round 1' || n === 'proofing r1') prefix = 'full proof:';
+              else if (n === 'proofing round 2' || n === 'proofing r2' || n === 'pre-apogee proof round 1' || n === 'pre-apogee proof round 2') prefix = 'proofing corrections:';
+              else if (n === 'apogee proof') prefix = 'final apogee';
+
+              if (prefix) {
+                 for (const [kTaskName, kTime] of Object.entries(cachedKanbanTasks[p.name])) {
+                    if (kTaskName.toLowerCase().startsWith(prefix)) {
+                       totalSecs += kTime;
+                    }
+                 }
+              } else {
+                 const exactMatch = Object.keys(cachedKanbanTasks[p.name]).find(k => k.toLowerCase() === n);
+                 if (exactMatch) totalSecs = cachedKanbanTasks[p.name][exactMatch];
+              }
+
+              if (totalSecs > 0) {
+                const totalMins = Math.floor(totalSecs / 60);
+                const h = Math.floor(totalMins / 60);
+                const m = totalMins % 60;
+                kanbanTimeStr = h + 'h ' + m + 'm';
+              }
+            }
+            
+            if (manualOverrides[t.id] && manualOverrides[t.id].duration) {
+              kanbanTimeStr = manualOverrides[t.id].duration;
+            }
+
+            
             return { 
+              id: t.id,
               name: t.name, 
               status, 
               type: 'task',
-              due_on: t.due_on || null,
-              completed_at: t.completed_at || null,
-              assignee: assignee
+              due_on: finalDue,
+              completed_at: (manualOverrides[t.id] ? manualOverrides[t.id].completed_at : (t.completed_at || null)),
+              assignee: assignee,
+              kanbanTimeStr: kanbanTimeStr,
+              subtasks: (t.subtasks && Array.isArray(t.subtasks)) ? t.subtasks.map(sub => processTask(sub, currentForcedStatus)) : []
             };
-          });
+          }
+          const tasks = s.tasks.map(t => processTask(t));
           
           return {
             name: s.section || s.name,
             tasks: tasks,
-            stats: { complete, inProgress, notStarted, total: tasks.length }
+            stats: { complete, inProgress, notStarted, total: complete + inProgress + notStarted }
           };
         })
       };
@@ -154,49 +482,35 @@ app.get('/api/data', (req, res) => {
         sectionsMap[secName].push(a);
       });
       
-      const WORKFLOW_ORDER = [
-        'Draft',
-        'Manager Draft Review',
-        'Draft Review',
-        'Layout Creation',
-        'Pilot Layout Review',
-        'Pilot Round',
-        'Layout Review',
-        'Proofing R1',
-        'Editorial Round',
-        'Editorial Round Final',
-        'Pre-Apogee Proof R1',
-        'Pre-Apogee Proof R2',
-        'Apogee Proof',
-        'Ready for Print Order',
-        'Approved',
-        'Ready to Route',
-        'Route',
-        'Print',
-        'Printing Complete',
-        'Copy Edit',
-        'Final'
-      ];
-
       const syntheticSections = Object.keys(sectionsMap).sort().map(secName => {
         // Find the article that has the furthest workflow step
         // Or if there are multiple articles (like Article and LYT), we use the one with the highest index
         const articles = sectionsMap[secName];
         let maxIndex = 0;
         let assignedUserFromName = null;
+        let maxArticleModified = null;
         
         articles.forEach(a => {
           if (a.workflowStep) {
             let idx = WORKFLOW_ORDER.indexOf(a.workflowStep);
             if (idx === -1) idx = 0; // fallback if unknown
-            if (idx >= maxIndex) {
+            if (idx > maxIndex) {
               maxIndex = idx;
-              currentStepName = a.workflowStep;
+              maxArticleModified = a.lastModified;
+            } else if (idx === maxIndex) {
+              if (!maxArticleModified || new Date(a.lastModified) > new Date(maxArticleModified)) {
+                 maxArticleModified = a.lastModified;
+              }
             }
           }
+          
           const extracted = extractAssigneeFromName(a.name);
           if (extracted) {
             assignedUserFromName = extracted;
+          } else if (a.assignedUserID) {
+             const mappedName = k4UserMap[a.assignedUserID];
+             if (mappedName) assignedUserFromName = mappedName;
+             else assignedUserFromName = 'User ' + a.assignedUserID;
           } else {
              const k4MapArticle = Object.values(k4MapData).flat().find(mapA => mapA.name === a.name);
              if (k4MapArticle && k4MapArticle.assignedUserID) {
@@ -207,10 +521,20 @@ app.get('/api/data', (req, res) => {
           }
         });
         
+        let timeOpenStr = null;
+        if (maxArticleModified) {
+          const diffMs = Date.now() - new Date(maxArticleModified).getTime();
+          const totalMins = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+          const h = Math.floor(totalMins / 60);
+          const m = totalMins % 60;
+          timeOpenStr = `${h}h ${m}m`;
+        }
+        
         let complete = 0, inProgress = 0, notStarted = 0;
         const tasks = WORKFLOW_ORDER.map((stepName, index) => {
           let status = 'Not Started';
           let assignee = null;
+          let taskTimeOpen = null;
           
           if (index < maxIndex) {
             status = 'Complete';
@@ -219,9 +543,37 @@ app.get('/api/data', (req, res) => {
             status = 'In Progress';
             inProgress++;
             assignee = assignedUserFromName;
+            taskTimeOpen = timeOpenStr;
           } else {
             status = 'Not Started';
             notStarted++;
+          }
+          
+          let taskKanbanTime = null;
+          if (cachedKanbanTasks['432237 Read 6 Curr']) {
+             let totalSecs = 0;
+             const stepMap = {
+               'Draft': 'content:',
+               'Edit': 'design:',
+               'Layout': 'layout',
+               'Proofing R1': 'full proof:',
+               'Proofing R2': 'proofing corrections:'
+             };
+             const prefix = stepMap[stepName];
+             if (prefix) {
+                for (const [kTaskName, kTime] of Object.entries(cachedKanbanTasks['432237 Read 6 Curr'])) {
+                   if (kTaskName.toLowerCase().startsWith(prefix)) {
+                      totalSecs += kTime;
+                   }
+                }
+             }
+             
+             if (totalSecs > 0) {
+                const totalMins = Math.floor(totalSecs / 60);
+                const h = Math.floor(totalMins / 60);
+                const m = totalMins % 60;
+                taskKanbanTime = h + 'h ' + m + 'm';
+             }
           }
           
           return {
@@ -230,7 +582,9 @@ app.get('/api/data', (req, res) => {
             type: 'task',
             due_on: null,
             completed_at: null,
-            assignee
+            assignee,
+            timeOpenStr: taskTimeOpen,
+            kanbanTimeStr: taskKanbanTime
           };
         });
 
@@ -256,8 +610,9 @@ app.get('/api/data', (req, res) => {
   }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
+console.log("Starting server...");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Live Dashboard running on http://localhost:${PORT}`);
 });
 
@@ -268,10 +623,23 @@ function runSync() {
   console.log('Running 15-min K4 & Asana Sync...');
   try {
     console.log('Syncing K4 Data...');
-    execSync('node /Users/jordan.jones/Desktop/dump_sync_fast.js > /dev/null 2>&1');
+    const os = require('os');
+    const localScratch = path.join(os.homedir(), '.gemini/antigravity-ide/scratch/asana-live-dashboard');
+    let k4Cmd = `node "${path.join(__dirname, 'dump_sync_fast.js')}" > /dev/null 2>&1`;
+    let asanaCmd = `node "${path.join(__dirname, 'export_asana.js')}" > /dev/null 2>&1`;
+    
+    if (fs.existsSync(localScratch)) {
+        k4Cmd = `node "${path.join(localScratch, 'dump_sync_fast.js')}" > /dev/null 2>&1`;
+        asanaCmd = `node "${path.join(localScratch, 'export_asana.js')}" > /dev/null 2>&1`;
+    }
+
+    execSync(k4Cmd);
     console.log('Syncing Asana Data...');
-    execSync('node /Users/jordan.jones/Desktop/export_asana.js > /dev/null 2>&1');
-    console.log('Sync Complete! Data is perfectly up to date.');
+    execSync(asanaCmd);
+    console.log('Sync Complete.');
+    
+    // Refresh the in-memory cache now that the files have been updated
+    loadDataIntoMemory();
   } catch (e) {
     console.error('Sync failed:', e.message);
   }
