@@ -11995,6 +11995,14 @@
     "currentStep": "Draft",
     "history": {}
   },
+  "17645052": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "17646412": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "17652537": {
     "currentStep": "Printing Complete",
     "history": {}
@@ -12282,6 +12290,16 @@
   "18489877": {
     "currentStep": "Pilot Round",
     "history": {}
+  },
+  "18496321": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
+  "18499558": {
+    "currentStep": "Pilot Round",
+    "history": {
+      "Pilot Layout Review": "2026-06-30T14:41:13.124+00:00"
+    }
   },
   "18515825": {
     "currentStep": "Pilot Round",
@@ -12647,6 +12665,10 @@
     "currentStep": "Layout Review",
     "history": {}
   },
+  "19188319": {
+    "currentStep": "Pilot Round",
+    "history": {}
+  },
   "19189099": {
     "currentStep": "Layout Review",
     "history": {}
@@ -12856,6 +12878,10 @@
     "history": {}
   },
   "19302288": {
+    "currentStep": "Pilot Round",
+    "history": {}
+  },
+  "19310532": {
     "currentStep": "Pilot Round",
     "history": {}
   },
@@ -13280,12 +13306,17 @@
     "history": {}
   },
   "19863200": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Editorial Round Final",
+    "history": {
+      "Editorial Round": "2026-06-29T18:21:21.299+00:00"
+    }
   },
   "19866302": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round": "2026-06-29T14:07:44.546+00:00",
+      "Editorial Round Final": "2026-06-29T14:07:44.546+00:00"
+    }
   },
   "19871056": {
     "currentStep": "Printing Complete",
@@ -13356,6 +13387,10 @@
     "history": {}
   },
   "19950199": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "19964321": {
     "currentStep": "Draft",
     "history": {}
   },
@@ -13807,6 +13842,10 @@
     "currentStep": "Draft",
     "history": {}
   },
+  "20510063": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "20542623": {
     "currentStep": "Draft",
     "history": {}
@@ -13968,8 +14007,10 @@
     "history": {}
   },
   "20753234": {
-    "currentStep": "Pilot Layout Review",
-    "history": {}
+    "currentStep": "Pilot Round",
+    "history": {
+      "Pilot Layout Review": "2026-06-30T12:17:15.066+00:00"
+    }
   },
   "20754873": {
     "currentStep": "Printing Complete",
@@ -14371,6 +14412,10 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "20993346": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "21000900": {
     "currentStep": "Printing Complete",
     "history": {}
@@ -14449,6 +14494,10 @@
   },
   "21288279": {
     "currentStep": "Layout Review",
+    "history": {}
+  },
+  "21294825": {
+    "currentStep": "Layout Creation",
     "history": {}
   },
   "21296333": {
@@ -14539,12 +14588,20 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "21477001": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "21477969": {
     "currentStep": "Layout Creation",
     "history": {}
   },
   "21478135": {
     "currentStep": "Draft",
+    "history": {}
+  },
+  "21483038": {
+    "currentStep": "Pilot Layout Review",
     "history": {}
   },
   "21498066": {
@@ -14680,8 +14737,10 @@
     "history": {}
   },
   "21648018": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-29T20:55:49.666+00:00"
+    }
   },
   "21648442": {
     "currentStep": "Draft",
@@ -14796,8 +14855,10 @@
     "history": {}
   },
   "21907106": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-26T17:00:26.168+00:00"
+    }
   },
   "21908583": {
     "currentStep": "Layout Review",
@@ -14812,8 +14873,10 @@
     "history": {}
   },
   "21916452": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-26T17:00:32.434+00:00"
+    }
   },
   "21926897": {
     "currentStep": "Printing Complete",
@@ -14857,6 +14920,10 @@
   },
   "21977026": {
     "currentStep": "Draft",
+    "history": {}
+  },
+  "21987251": {
+    "currentStep": "Pilot Layout Review",
     "history": {}
   },
   "21990854": {
@@ -14943,8 +15010,16 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "22086689": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "22089390": {
     "currentStep": "Printing Complete",
+    "history": {}
+  },
+  "22096170": {
+    "currentStep": "Pilot Layout Review",
     "history": {}
   },
   "22098674": {
@@ -15704,8 +15779,10 @@
     "history": {}
   },
   "23006271": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-29T18:04:10.625+00:00"
+    }
   },
   "23006660": {
     "currentStep": "Draft",
@@ -16187,6 +16264,14 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "23542500": {
+    "currentStep": "Pilot Round",
+    "history": {}
+  },
+  "23542842": {
+    "currentStep": "Pilot Round",
+    "history": {}
+  },
   "23544579": {
     "currentStep": "Printing Complete",
     "history": {}
@@ -16384,8 +16469,10 @@
     "history": {}
   },
   "23762452": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-29T20:55:58.905+00:00"
+    }
   },
   "23772684": {
     "currentStep": "Printing Complete",
@@ -16488,12 +16575,20 @@
     "history": {}
   },
   "23881051": {
-    "currentStep": "Proofing R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Proofing R1": "2026-06-29T19:45:42.074+00:00",
+      "Editorial Round": "2026-06-30T13:08:19.757+00:00",
+      "Editorial Round Final": "2026-06-30T16:23:43.941+00:00"
+    }
   },
   "23881382": {
-    "currentStep": "Proofing R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Proofing R1": "2026-06-29T19:45:28.279+00:00",
+      "Editorial Round": "2026-06-30T13:08:07.345+00:00",
+      "Editorial Round Final": "2026-06-30T16:02:33.353+00:00"
+    }
   },
   "23884711": {
     "currentStep": "Ready for Print Order",
@@ -16736,28 +16831,42 @@
     "history": {}
   },
   "24250019": {
-    "currentStep": "Proofing R1",
-    "history": {}
+    "currentStep": "Editorial Round Final",
+    "history": {
+      "Proofing R1": "2026-06-30T13:14:16.204+00:00",
+      "Editorial Round": "2026-06-30T17:15:33.720+00:00"
+    }
   },
   "24250222": {
-    "currentStep": "Proofing R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Proofing R1": "2026-06-30T13:14:07.148+00:00",
+      "Editorial Round": "2026-06-30T17:15:24.071+00:00",
+      "Editorial Round Final": "2026-06-30T17:30:16.326+00:00"
+    }
   },
   "24255533": {
     "currentStep": "Draft",
     "history": {}
   },
   "24255685": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Layout Creation",
+    "history": {
+      "Manager Draft Review": "2026-06-30T13:43:01.177+00:00",
+      "Draft Review": "2026-06-30T18:32:12.913+00:00"
+    }
   },
   "24261150": {
     "currentStep": "Draft",
     "history": {}
   },
   "24261507": {
-    "currentStep": "Draft",
-    "history": {}
+    "currentStep": "Layout Creation",
+    "history": {
+      "Draft": "2026-06-29T21:57:48.889+00:00",
+      "Manager Draft Review": "2026-06-30T16:44:51.432+00:00",
+      "Draft Review": "2026-06-30T18:17:24.591+00:00"
+    }
   },
   "24275603": {
     "currentStep": "Printing Complete",
@@ -17052,16 +17161,20 @@
     "history": {}
   },
   "25077789": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-30T16:02:13.100+00:00"
+    }
   },
   "25094133": {
     "currentStep": "Ready for Print Order",
     "history": {}
   },
   "25095763": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-30T16:02:06.838+00:00"
+    }
   },
   "25151582": {
     "currentStep": "Printing Complete",
@@ -17112,8 +17225,10 @@
     "history": {}
   },
   "25259997": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-26T18:16:31.154+00:00"
+    }
   },
   "25271339": {
     "currentStep": "Draft",
@@ -17124,8 +17239,10 @@
     "history": {}
   },
   "25274609": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-26T14:10:42.862+00:00"
+    }
   },
   "25275314": {
     "currentStep": "Printing Complete",
@@ -17144,8 +17261,10 @@
     "history": {}
   },
   "25322165": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Ready for Print Order",
+    "history": {
+      "Apogee Proof": "2026-06-29T18:04:19.750+00:00"
+    }
   },
   "25323494": {
     "currentStep": "Apogee Proof",
@@ -17237,6 +17356,10 @@
   },
   "25550026": {
     "currentStep": "Draft",
+    "history": {}
+  },
+  "25551519": {
+    "currentStep": "Pilot Layout Review",
     "history": {}
   },
   "25564815": {
@@ -17446,6 +17569,18 @@
   "26197806": {
     "currentStep": "Printing Complete",
     "history": {}
+  },
+  "26202048": {
+    "currentStep": "Pilot Round",
+    "history": {
+      "Pilot Layout Review": "2026-06-30T14:41:00.944+00:00"
+    }
+  },
+  "26202326": {
+    "currentStep": "Pilot Round",
+    "history": {
+      "Pilot Layout Review": "2026-06-29T16:08:52.413+00:00"
+    }
   },
   "26203043": {
     "currentStep": "Printing Complete",
@@ -17883,6 +18018,10 @@
     "currentStep": "Layout Review",
     "history": {}
   },
+  "26697762": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "26755869": {
     "currentStep": "Ready for Print Order",
     "history": {}
@@ -17923,8 +18062,16 @@
     "currentStep": "Draft",
     "history": {}
   },
+  "26952494": {
+    "currentStep": "Pilot Round",
+    "history": {}
+  },
   "26955728": {
     "currentStep": "Apogee Proof",
+    "history": {}
+  },
+  "26960174": {
+    "currentStep": "Pilot Layout Review",
     "history": {}
   },
   "26967576": {
@@ -17936,6 +18083,10 @@
     "history": {}
   },
   "26967772": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
+  "26967870": {
     "currentStep": "Pilot Layout Review",
     "history": {}
   },
@@ -18099,6 +18250,10 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "27239243": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "27241533": {
     "currentStep": "Printing Complete",
     "history": {}
@@ -18112,16 +18267,22 @@
     "history": {}
   },
   "27261980": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:18:29.159+00:00"
+    }
   },
   "27263498": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:25:24.504+00:00"
+    }
   },
   "27263935": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T15:37:13.391+00:00"
+    }
   },
   "27269357": {
     "currentStep": "Printing Complete",
@@ -18420,8 +18581,10 @@
     "history": {}
   },
   "27325134": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:07:40.091+00:00"
+    }
   },
   "27348520": {
     "currentStep": "Printing Complete",
@@ -18439,6 +18602,10 @@
     "currentStep": "Draft",
     "history": {}
   },
+  "27399482": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "27400428": {
     "currentStep": "Draft",
     "history": {}
@@ -18452,15 +18619,23 @@
     "history": {}
   },
   "27410950": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:08:47.242+00:00"
+    }
   },
   "27411425": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:22:16.775+00:00"
+    }
   },
   "27413206": {
     "currentStep": "Printing Complete",
+    "history": {}
+  },
+  "27413217": {
+    "currentStep": "Draft",
     "history": {}
   },
   "27414466": {
@@ -18497,6 +18672,10 @@
   },
   "27420441": {
     "currentStep": "Printing Complete",
+    "history": {}
+  },
+  "27420486": {
+    "currentStep": "Draft",
     "history": {}
   },
   "27425888": {
@@ -18639,6 +18818,10 @@
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "27451923": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "27455147": {
     "currentStep": "Draft",
     "history": {}
@@ -18713,6 +18896,10 @@
   },
   "27529205": {
     "currentStep": "Apogee Proof",
+    "history": {}
+  },
+  "27533111": {
+    "currentStep": "Pilot Round",
     "history": {}
   },
   "27533670": {
@@ -18812,8 +18999,10 @@
     "history": {}
   },
   "27607954": {
-    "currentStep": "Draft",
-    "history": {}
+    "currentStep": "Manager Draft Review",
+    "history": {
+      "Draft": "2026-06-30T14:39:07.019+00:00"
+    }
   },
   "27611179": {
     "currentStep": "Draft",
@@ -19144,28 +19333,43 @@
     "history": {}
   },
   "28056662": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round": "2026-06-29T16:29:43.672+00:00",
+      "Editorial Round Final": "2026-06-29T16:29:43.672+00:00"
+    }
   },
   "28058915": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round Final": "2026-06-29T18:20:07.002+00:00"
+    }
   },
   "28061415": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round Final": "2026-06-29T16:30:12.066+00:00"
+    }
   },
   "28064315": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round": "2026-06-29T16:30:42.181+00:00",
+      "Editorial Round Final": "2026-06-29T16:30:42.181+00:00"
+    }
   },
   "28066547": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round": "2026-06-29T16:33:05.622+00:00",
+      "Editorial Round Final": "2026-06-29T16:33:05.622+00:00"
+    }
   },
   "28068340": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round Final": "2026-06-29T16:33:29.455+00:00"
+    }
   },
   "28077081": {
     "currentStep": "Apogee Proof",
@@ -19488,12 +19692,20 @@
     "history": {}
   },
   "28435173": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Editorial Round Final": "2026-06-29T19:20:01.045+00:00",
+      "Pre-Apogee Proof R1": "2026-06-30T13:00:05.242+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T14:54:58.162+00:00"
+    }
   },
   "28435376": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Editorial Round Final": "2026-06-29T18:46:15.436+00:00",
+      "Pre-Apogee Proof R1": "2026-06-30T13:10:07.458+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T15:14:11.594+00:00"
+    }
   },
   "28440376": {
     "currentStep": "Printing Complete",
@@ -19627,6 +19839,10 @@
     "currentStep": "Pilot Round",
     "history": {}
   },
+  "28654882": {
+    "currentStep": "Pilot Layout Review",
+    "history": {}
+  },
   "28666447": {
     "currentStep": "Draft",
     "history": {}
@@ -19691,12 +19907,64 @@
     "currentStep": "Cover Creation",
     "history": {}
   },
+  "28845086": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28847967": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28851491": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28852809": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28854862": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28855196": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28855940": {
+    "currentStep": "Proofing R1",
+    "history": {
+      "Draft": "2026-06-30T14:42:54.842+00:00",
+      "Layout Review": "2026-06-30T16:45:22.085+00:00"
+    }
+  },
+  "28856292": {
+    "currentStep": "Proofing R1",
+    "history": {
+      "Draft": "2026-06-29T20:11:02.589+00:00",
+      "Manager Draft Review": "2026-06-30T14:11:50.510+00:00",
+      "Layout Creation": "2026-06-30T14:42:36.005+00:00",
+      "Layout Review": "2026-06-30T15:35:34.798+00:00"
+    }
+  },
   "28857714": {
     "currentStep": "Printing Complete",
     "history": {}
   },
+  "28857861": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "28858097": {
     "currentStep": "Printing Complete",
+    "history": {}
+  },
+  "28867042": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "28867710": {
+    "currentStep": "Draft",
     "history": {}
   },
   "28869638": {
@@ -19711,8 +19979,36 @@
     "currentStep": "Apogee Proof",
     "history": {}
   },
+  "28892722": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28893100": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28893273": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "28894528": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "28894705": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
   "28896038": {
     "currentStep": "Layout Creation",
+    "history": {}
+  },
+  "28897113": {
+    "currentStep": "Cover Creation",
+    "history": {}
+  },
+  "28897850": {
+    "currentStep": "Draft",
     "history": {}
   },
   "28899048": {
@@ -19727,6 +20023,14 @@
     "currentStep": "Manager Draft Review",
     "history": {}
   },
+  "28904918": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "28905040": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "28907881": {
     "currentStep": "Printing Complete",
     "history": {}
@@ -19735,8 +20039,20 @@
     "currentStep": "Layout Creation",
     "history": {}
   },
+  "28908483": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "28908613": {
+    "currentStep": "Draft",
+    "history": {}
+  },
   "28920275": {
     "currentStep": "Manager Draft Review",
+    "history": {}
+  },
+  "28923693": {
+    "currentStep": "Draft",
     "history": {}
   },
   "28925494": {
@@ -19749,6 +20065,10 @@
   },
   "28934237": {
     "currentStep": "Printing Complete",
+    "history": {}
+  },
+  "28935400": {
+    "currentStep": "Draft",
     "history": {}
   },
   "28936558": {
@@ -19792,8 +20112,12 @@
     "history": {}
   },
   "29009956": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Editorial Round Final": "2026-06-29T18:46:42.160+00:00",
+      "Pre-Apogee Proof R1": "2026-06-30T12:59:48.312+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T15:14:27.066+00:00"
+    }
   },
   "29015608": {
     "currentStep": "Printing Complete",
@@ -20532,12 +20856,19 @@
     "history": {}
   },
   "30778936": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T15:55:11.059+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T17:38:33.365+00:00"
+    }
   },
   "30787614": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Editorial Round": "2026-06-29T19:29:24.614+00:00",
+      "Editorial Round Final": "2026-06-29T21:01:47.144+00:00",
+      "Pre-Apogee Proof R1": "2026-06-30T16:47:00.491+00:00"
+    }
   },
   "30788002": {
     "currentStep": "Layout Review",
@@ -20852,8 +21183,10 @@
     "history": {}
   },
   "31323711": {
-    "currentStep": "Layout Review",
-    "history": {}
+    "currentStep": "Proofing R1",
+    "history": {
+      "Layout Review": "2026-06-25T17:59:02.479+00:00"
+    }
   },
   "31348324": {
     "currentStep": "Printing Complete",
@@ -21440,8 +21773,10 @@
     "history": {}
   },
   "32236163": {
-    "currentStep": "Layout Review",
-    "history": {}
+    "currentStep": "Proofing R1",
+    "history": {
+      "Layout Review": "2026-06-29T17:51:11.813+00:00"
+    }
   },
   "32237159": {
     "currentStep": "Proofing R1",
@@ -21452,8 +21787,10 @@
     "history": {}
   },
   "32237744": {
-    "currentStep": "Layout Review",
-    "history": {}
+    "currentStep": "Proofing R1",
+    "history": {
+      "Layout Review": "2026-06-29T17:51:33.162+00:00"
+    }
   },
   "32238499": {
     "currentStep": "Printing Complete",
@@ -22252,8 +22589,11 @@
     "history": {}
   },
   "33003478": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-29T19:46:50.780+00:00",
+      "Pre-Apogee Proof R2": "2026-06-29T20:48:20.024+00:00"
+    }
   },
   "33017405": {
     "currentStep": "Ready for Print Order",
@@ -22624,16 +22964,24 @@
     "history": {}
   },
   "33487686": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-29T19:31:49.926+00:00",
+      "Pre-Apogee Proof R2": "2026-06-29T21:13:34.998+00:00"
+    }
   },
   "33488900": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-29T19:49:36.630+00:00",
+      "Pre-Apogee Proof R2": "2026-06-29T21:13:29.252+00:00"
+    }
   },
   "33491753": {
-    "currentStep": "Layout Review",
-    "history": {}
+    "currentStep": "Proofing R1",
+    "history": {
+      "Layout Review": "2026-06-29T17:58:32.005+00:00"
+    }
   },
   "33492010": {
     "currentStep": "Layout Review",
@@ -23096,8 +23444,10 @@
     "history": {}
   },
   "33987206": {
-    "currentStep": "Apogee Proof",
-    "history": {}
+    "currentStep": "Layout Review",
+    "history": {
+      "Apogee Proof": "2026-06-29T17:50:24.393+00:00"
+    }
   },
   "33987264": {
     "currentStep": "Layout Review",
@@ -25484,8 +25834,11 @@
     "history": {}
   },
   "36454774": {
-    "currentStep": "Draft Review",
-    "history": {}
+    "currentStep": "Layout Review",
+    "history": {
+      "Draft Review": "2026-06-30T15:13:16.868+00:00",
+      "Layout Creation": "2026-06-30T17:30:26.467+00:00"
+    }
   },
   "36456450": {
     "currentStep": "Draft",
@@ -26064,8 +26417,11 @@
     "history": {}
   },
   "37124822": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T14:37:29.646+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T14:37:29.646+00:00"
+    }
   },
   "37124986": {
     "currentStep": "Layout Review",
@@ -26080,8 +26436,11 @@
     "history": {}
   },
   "37136239": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T13:26:44.896+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T14:42:38.618+00:00"
+    }
   },
   "37138950": {
     "currentStep": "Layout Review",
@@ -26384,12 +26743,17 @@
     "history": {}
   },
   "38012568": {
-    "currentStep": "Pre-Apogee Proof R2",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R2": "2026-06-27T16:00:35.296+00:00"
+    }
   },
   "38015237": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-29T19:27:02.731+00:00",
+      "Pre-Apogee Proof R2": "2026-06-29T19:27:02.731+00:00"
+    }
   },
   "38020848": {
     "currentStep": "Manager Draft Review",
@@ -26604,8 +26968,14 @@
     "history": {}
   },
   "39509692": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Layout Review": "2026-06-10T09:43:00.000-05:00",
+      "Proofing R1": "2026-06-19T13:47:00.000-05:00",
+      "Editorial Round": "2026-06-22T12:17:00.000-05:00",
+      "Pre-Apogee Proof R1": "2026-06-30T18:59:17.241+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T19:08:47.556+00:00"
+    }
   },
   "39520208": {
     "currentStep": "Draft",
@@ -27008,24 +27378,33 @@
     "history": {}
   },
   "40513254": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T15:57:28.423+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T19:14:49.270+00:00"
+    }
   },
   "40515399": {
     "currentStep": "Pre-Apogee Proof R1",
     "history": {}
   },
   "40529663": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:13:29.597+00:00"
+    }
   },
   "40531352": {
-    "currentStep": "Pre-Apogee Proof R2",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R2": "2026-06-30T17:15:25.633+00:00"
+    }
   },
   "40531516": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T17:17:59.823+00:00"
+    }
   },
   "40531680": {
     "currentStep": "Layout Creation",
@@ -27040,16 +27419,23 @@
     "history": {}
   },
   "40532306": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round": "2026-06-29T19:29:37.366+00:00",
+      "Editorial Round Final": "2026-06-29T21:01:56.225+00:00"
+    }
   },
   "40532512": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:09:03.297+00:00"
+    }
   },
   "40532719": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R2",
+    "history": {
+      "Editorial Round": "2026-06-30T15:03:56.224+00:00"
+    }
   },
   "40577972": {
     "currentStep": "Draft",
@@ -27064,8 +27450,11 @@
     "history": {}
   },
   "40624796": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T16:24:50.121+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T17:27:24.090+00:00"
+    }
   },
   "40625546": {
     "currentStep": "Layout Creation",
@@ -27148,16 +27537,22 @@
     "history": {}
   },
   "40883651": {
-    "currentStep": "Editorial Round Final",
-    "history": {}
+    "currentStep": "Pre-Apogee Proof R1",
+    "history": {
+      "Editorial Round Final": "2026-06-29T20:28:15.967+00:00"
+    }
   },
   "40884066": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Editorial Round Final",
+    "history": {
+      "Editorial Round": "2026-06-29T21:50:16.349+00:00"
+    }
   },
   "40884422": {
-    "currentStep": "Editorial Round",
-    "history": {}
+    "currentStep": "Editorial Round Final",
+    "history": {
+      "Editorial Round": "2026-06-29T20:11:32.675+00:00"
+    }
   },
   "40897751": {
     "currentStep": "Draft",
@@ -27244,16 +27639,20 @@
     "history": {}
   },
   "41018556": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Draft Review",
+    "history": {
+      "Manager Draft Review": "2026-06-29T20:20:33.797+00:00"
+    }
   },
   "41021909": {
     "currentStep": "Layout Creation",
     "history": {}
   },
   "41022052": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Draft Review",
+    "history": {
+      "Manager Draft Review": "2026-06-12T16:50:19.961+00:00"
+    }
   },
   "41025429": {
     "currentStep": "Proofing R1",
@@ -27376,8 +27775,10 @@
     "history": {}
   },
   "41345853": {
-    "currentStep": "Draft Review",
-    "history": {}
+    "currentStep": "Layout Creation",
+    "history": {
+      "Draft Review": "2026-06-30T15:07:37.409+00:00"
+    }
   },
   "41350728": {
     "currentStep": "Draft",
@@ -27400,12 +27801,17 @@
     "history": {}
   },
   "41656425": {
-    "currentStep": "Draft",
-    "history": {}
+    "currentStep": "Layout Review",
+    "history": {
+      "Draft": "2026-06-30T17:06:53.890+00:00"
+    }
   },
   "41656702": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Layout Review",
+    "history": {
+      "Manager Draft Review": "2026-06-30T16:23:39.322+00:00",
+      "Layout Creation": "2026-06-30T17:06:37.168+00:00"
+    }
   },
   "41693230": {
     "currentStep": "Draft",
@@ -27432,12 +27838,18 @@
     "history": {}
   },
   "41736796": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T13:14:14.484+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T16:01:30.837+00:00"
+    }
   },
   "41737156": {
-    "currentStep": "Pre-Apogee Proof R1",
-    "history": {}
+    "currentStep": "Apogee Proof",
+    "history": {
+      "Pre-Apogee Proof R1": "2026-06-30T14:51:33.631+00:00",
+      "Pre-Apogee Proof R2": "2026-06-30T16:01:22.092+00:00"
+    }
   },
   "41809014": {
     "currentStep": "Draft",
@@ -27484,12 +27896,16 @@
     "history": {}
   },
   "42000535": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Draft Review",
+    "history": {
+      "Manager Draft Review": "2026-06-29T15:25:33.601+00:00"
+    }
   },
   "42000979": {
-    "currentStep": "Manager Draft Review",
-    "history": {}
+    "currentStep": "Draft Review",
+    "history": {
+      "Manager Draft Review": "2026-06-29T15:30:17.697+00:00"
+    }
   },
   "42002273": {
     "currentStep": "Draft",
@@ -27500,6 +27916,10 @@
     "history": {}
   },
   "42007973": {
+    "currentStep": "Draft",
+    "history": {}
+  },
+  "42037041": {
     "currentStep": "Draft",
     "history": {}
   }

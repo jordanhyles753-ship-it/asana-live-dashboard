@@ -98,16 +98,18 @@ function matchSection(secStr, artName) {
   const cArt = artName.replace(/[^a-z0-9]/gi, '').toLowerCase();
   if (cSec.includes(cArt) || cArt.includes(cSec)) return true;
 
-  // Number extraction fallback (e.g. 'Lessons 1-10' vs 'L001-010')
+  // Number extraction fallback (e.g. 'Lessons 1-10' vs 'L001-010' or '51-55' vs '51-60')
   const secNums = secStr.match(/\d+/g);
   const artNums = artName.match(/\d+/g);
   
-  if (secNums && artNums && secNums.length >= 2 && artNums.length >= 3) {
+  if (secNums && artNums && secNums.length >= 2 && artNums.length >= 2) {
     const s1 = parseInt(secNums[secNums.length-2]);
     const s2 = parseInt(secNums[secNums.length-1]);
     const a1 = parseInt(artNums[artNums.length-2]);
     const a2 = parseInt(artNums[artNums.length-1]);
-    if (s1 === a1 && s2 === a2) return true;
+    
+    // Check for range overlap instead of exact match
+    if (s1 <= a2 && s2 >= a1) return true;
   }
   
   // Front matter / Glossary
@@ -302,7 +304,12 @@ app.get('/api/data', (req, res) => {
     }
 
     // We only send a subset of Asana data to avoid 54MB payload to browser
-    const projects = asanaData.map(p => {
+    let filteredAsanaData = asanaData.filter(p => {
+       if (p.code === '432237' && (p.name.includes('Lang Curr') || p.name.includes('Writing Curr'))) return false;
+       return true;
+    });
+    
+    const projects = filteredAsanaData.map(p => {
       // Find matching K4 project to blend data
       let k4Stage = 'Unknown';
       if (k4Data[p.code] && k4Data[p.code].length > 0) {
@@ -406,14 +413,8 @@ app.get('/api/data', (req, res) => {
               // fall back to the article's lastModified date.
               parsedCompletedAt = historyDate || matchedArticle.lastModified || null;
             } else {
-              const completedField = t.custom_fields && t.custom_fields.find(f => f.name === 'Completed');
-              if (completedField && completedField.date_value && completedField.date_value.date) {
-                parsedCompletedAt = completedField.date_value.date + 'T12:00:00Z';
-              } else if (completedField && completedField.display_value) {
-                parsedCompletedAt = completedField.display_value;
-              } else if (t.completed_at) {
-                parsedCompletedAt = t.completed_at;
-              }
+              // Forced to only use K4 for Date Completed, ignoring Asana's completed_at
+              parsedCompletedAt = null;
             }
 
             let status = 'Not Started';
@@ -448,36 +449,7 @@ app.get('/api/data', (req, res) => {
             }
             
             let kanbanTimeStr = null;
-            if (cachedKanbanTasks[p.name]) {
-              let totalSecs = 0;
-              const n = t.name.toLowerCase();
-              let prefix = null;
-              
-              if (n === 'draft') prefix = 'content:';
-              else if (n === 'edit' || n === 'copy edit' || n === 'art check' || n === 'layout creation') prefix = 'design:';
-              else if (n === 'layout') prefix = 'layout';
-              else if (n === 'proofing round 1' || n === 'proofing r1') prefix = 'full proof:';
-              else if (n === 'proofing round 2' || n === 'proofing r2' || n === 'pre-apogee proof round 1' || n === 'pre-apogee proof round 2') prefix = 'proofing corrections:';
-              else if (n === 'apogee proof') prefix = 'final apogee';
-
-              if (prefix) {
-                 for (const [kTaskName, kTime] of Object.entries(cachedKanbanTasks[p.name])) {
-                    if (kTaskName.toLowerCase().startsWith(prefix)) {
-                       totalSecs += kTime;
-                    }
-                 }
-              } else {
-                 const exactMatch = Object.keys(cachedKanbanTasks[p.name]).find(k => k.toLowerCase() === n);
-                 if (exactMatch) totalSecs = cachedKanbanTasks[p.name][exactMatch];
-              }
-
-              if (totalSecs > 0) {
-                const totalMins = Math.floor(totalSecs / 60);
-                const h = Math.floor(totalMins / 60);
-                const m = totalMins % 60;
-                kanbanTimeStr = h + 'h ' + m + 'm';
-              }
-            }
+            // Removed Asana timer logic to rely purely on K4 time took
             
             if (manualOverrides[t.id] && manualOverrides[t.id].duration) {
               kanbanTimeStr = manualOverrides[t.id].duration;
@@ -507,7 +479,6 @@ app.get('/api/data', (req, res) => {
       };
     });
     
-    // Inject synthetic 432237 Read 6 Curr
     const READ6_WORKFLOW_ORDER = [
       'Draft', 'Manager Draft Review', 'Draft Review', 'Layout Creation',
       'Layout Review', 'Proofing R1', 'Editorial Round', 'Editorial Round Final',
@@ -515,29 +486,39 @@ app.get('/api/data', (req, res) => {
       'Ready for Print Order', 'Approved', 'Ready to Route', 'Route', 'Print',
       'Printing Complete', 'Copy Edit', 'Final'
     ];
-    const read6Articles = (k4Data['432237'] || []).filter(a => a.name && a.name.includes('Read'));
-    if (read6Articles.length > 0) {
+
+    // Helper to synthesize projects from K4
+    function synthesizeProject(code, projectName, idStr, articleNameFilter, regexExtractor, workflowOrder, asanaProjectId) {
+      const articles = (k4Data[code] || []).filter(a => a.name && articleNameFilter(a.name));
+      if (articles.length === 0) return null;
+      
+      const asanaProject = asanaData.find(p => p.id === asanaProjectId);
+      
       const sectionsMap = {};
-      read6Articles.forEach(a => {
-        const m = a.name.match(/Read(?:ing)? 6 ([\w-]+)/);
+      articles.forEach(a => {
+        const m = a.name.match(regexExtractor);
         const secName = m ? m[1] : 'Other';
         if (!sectionsMap[secName]) sectionsMap[secName] = [];
         sectionsMap[secName].push(a);
       });
       
       const syntheticSections = Object.keys(sectionsMap).sort().map(secName => {
-        // Find the article that has the furthest workflow step
-        // Or if there are multiple articles (like Article and LYT), we use the one with the highest index
-        const articles = sectionsMap[secName];
+        const secArticles = sectionsMap[secName];
         let maxIndex = 0;
         let assignedUserFromName = null;
         let maxArticleModified = null;
         let maxArticleId = null;
         
-        articles.forEach(a => {
+        // Find matching Asana section for time data
+        let matchedAsanaSection = null;
+        if (asanaProject) {
+           matchedAsanaSection = asanaProject.sections.find(s => matchSection(s.section, secName));
+        }
+        
+        secArticles.forEach(a => {
           if (a.workflowStep) {
-            let idx = READ6_WORKFLOW_ORDER.indexOf(a.workflowStep);
-            if (idx === -1) idx = 0; // fallback if unknown
+            let idx = workflowOrder.indexOf(a.workflowStep);
+            if (idx === -1) idx = 0;
             if (idx > maxIndex) {
               maxIndex = idx;
               maxArticleModified = a.lastModified;
@@ -577,11 +558,16 @@ app.get('/api/data', (req, res) => {
         }
         
         let complete = 0, inProgress = 0, notStarted = 0;
-        const tasks = READ6_WORKFLOW_ORDER.map((stepName, index) => {
+        let previousTaskCompletedAt = null;
+        
+        const tasks = workflowOrder.map((stepName, index) => {
           let status = 'Not Started';
           let assignee = null;
           let taskTimeOpen = null;
           let parsedCompletedAt = null;
+          
+          // Asana Task matching removed - forcing K4 only for Date Completed
+
           
           if (index < maxIndex) {
             status = 'Complete';
@@ -611,7 +597,8 @@ app.get('/api/data', (req, res) => {
           }
           
           let taskKanbanTime = null;
-          if (cachedKanbanTasks['432237 Read 6 Curr']) {
+          let kanbanFound = false;
+          if (cachedKanbanTasks[projectName]) {
              let totalSecs = 0;
              const stepMap = {
                'Draft': 'content:',
@@ -622,9 +609,11 @@ app.get('/api/data', (req, res) => {
              };
              const prefix = stepMap[stepName];
              if (prefix) {
-                for (const [kTaskName, kTime] of Object.entries(cachedKanbanTasks['432237 Read 6 Curr'])) {
-                   if (kTaskName.toLowerCase().startsWith(prefix)) {
+                for (const [kTaskName, kTime] of Object.entries(cachedKanbanTasks[projectName])) {
+                   // Ensure it's for this specific section! e.g. "Full Proof: L 81-90" includes "81-90"
+                   if (kTaskName.toLowerCase().startsWith(prefix) && kTaskName.replace(/[^a-z0-9]/gi, '').includes(secName.replace(/[^a-z0-9]/gi, ''))) {
                       totalSecs += kTime;
+                      kanbanFound = true;
                    }
                 }
              }
@@ -633,8 +622,34 @@ app.get('/api/data', (req, res) => {
                 const totalMins = Math.floor(totalSecs / 60);
                 const h = Math.floor(totalMins / 60);
                 const m = totalMins % 60;
-                taskKanbanTime = h + 'h ' + m + 'm';
+                taskKanbanTime = `${h}h ${m}m`;
              }
+          }
+          
+          let asanaCompletedAt = null;
+          if (matchedAsanaSection && matchedAsanaSection.tasks) {
+             const normStepName = normalizeStep(stepName);
+             const aTask = matchedAsanaSection.tasks.find(t => normalizeStep(t.name) === normStepName || t.name.toLowerCase().includes(stepName.toLowerCase()));
+             if (aTask && aTask.completed_at) {
+                asanaCompletedAt = new Date(aTask.completed_at).getTime();
+             }
+          }
+
+          // Fallback to Asana completed_at duration
+          if (!taskKanbanTime && status === 'Complete' && asanaCompletedAt) {
+             if (previousTaskCompletedAt) {
+                const diffSecs = Math.floor((asanaCompletedAt - previousTaskCompletedAt) / 1000);
+                if (diffSecs >= 0) {
+                  const totalMins = Math.floor(diffSecs / 60);
+                  const h = Math.floor(totalMins / 60);
+                  const m = totalMins % 60;
+                  taskKanbanTime = `${h}h ${m}m`;
+                }
+             }
+          }
+          
+          if (asanaCompletedAt) {
+             previousTaskCompletedAt = asanaCompletedAt;
           }
           
           return {
@@ -656,15 +671,47 @@ app.get('/api/data', (req, res) => {
         };
       });
       
-      projects.push({
-        id: 'synthetic_432237_read_6',
-        name: '432237 Read 6 Curr',
-        code: '432237',
+      return {
+        id: idStr,
+        name: projectName,
+        code: code,
         k4Stage: 'Live from K4',
         sections: syntheticSections
-      });
+      };
     }
 
+    const synRead = synthesizeProject(
+       '432237', 
+       '432237 Read 6 Curr', 
+       'synthetic_432237_read_6',
+       n => n.includes('Read') && !n.toUpperCase().includes('TRASH'),
+       /Read(?:ing)? 6 ([\w-]+)/,
+       READ6_WORKFLOW_ORDER,
+       null // no matching asana project for Read 6 Curr
+    );
+    if (synRead) projects.push(synRead);
+
+    const synWriting = synthesizeProject(
+       '432237',
+       '432237 Language Arts 6 Writing Curr',
+       'synthetic_432237_writing_6',
+       n => n.includes('Writing') && !n.toUpperCase().includes('TRASH'),
+       /Writing 6\s+L?\s*([a-zA-Z0-9\-\–]+)/,
+       WORKFLOW_ORDER,
+       '1211454563481808' // 432237 Language Arts 6 Writing Curr
+    );
+    if (synWriting) projects.push(synWriting);
+
+    const synLang = synthesizeProject(
+       '432237',
+       '432237 Language Arts 6 Lang Curr',
+       'synthetic_432237_lang_6',
+       n => (n.match(/Lang 6/i) || n.match(/LA 6 SVP/i)) && !n.toUpperCase().includes('TRASH'),
+       /(?:Lang 6|LA 6 SVP)\s+L?\s*([a-zA-Z0-9\-\–]+)/i,
+       WORKFLOW_ORDER,
+       '1211428196243421' // 432237 Language Arts 6 Lang Curr
+    );
+    if (synLang) projects.push(synLang);
     res.json({ projects });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -678,6 +725,7 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 // Run sync immediately on startup (in background) and then every 15 mins
+runSync();
 setInterval(() => runSync(), 15 * 60 * 1000);
 
 async function runSync() {
@@ -685,14 +733,8 @@ async function runSync() {
   try {
     console.log('Syncing K4 Data...');
     const os = require('os');
-    const localScratch = path.join(os.homedir(), '.gemini/antigravity-ide/scratch/asana-live-dashboard');
     let k4Cmd = `node "${path.join(__dirname, 'dump_sync_fast.js')}" > /dev/null 2>&1`;
     let asanaCmd = `node "${path.join(__dirname, 'export_asana.js')}" > /dev/null 2>&1`;
-    
-    if (fs.existsSync(localScratch)) {
-        k4Cmd = `node "${path.join(localScratch, 'dump_sync_fast.js')}" > /dev/null 2>&1`;
-        asanaCmd = `node "${path.join(localScratch, 'export_asana.js')}" > /dev/null 2>&1`;
-    }
 
     const util = require('util');
     const exec = util.promisify(require('child_process').exec);

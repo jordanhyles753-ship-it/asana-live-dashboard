@@ -706,7 +706,7 @@ async function main() {
 
   const k4Map = {};
   for (const a of allArticles) {
-    if (a.code && a.workflowStep !== 'Trash') {
+    if (a.code && a.workflowStep !== 'Trash' && !a.name.toUpperCase().includes('TRASH')) {
       if (!k4Map[a.code]) k4Map[a.code] = [];
       k4Map[a.code].push(a);
     }
